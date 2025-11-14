@@ -24,3 +24,20 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* Custom thin green scrollbar (add to globals.css after @tailwind directives) */
+::-webkit-scrollbar {
+  width: 4px; /* Thin width */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Matches dark theme */
+}
+
+::-webkit-scrollbar-thumb {
+  background: theme("colors.gray.600"); /* #10b981 - Tailwind green-500 */
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: theme("colors.gray.600"); /* #059669 - Darker green on hover */
+}
