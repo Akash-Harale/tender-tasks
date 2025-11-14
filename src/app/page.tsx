@@ -1,4 +1,8 @@
-"use client";
+"use client"; // Client-side for state (drag/drop, search, view toggle).
+
+// Main board page: Sidebar, header, columns with drag/drop (Levels 1-2).
+// Uses flat tasks state; groups via utility (Level 3). Search filters client-side.
+// Added: List view toggle with sorted task list (minimal reuse of TaskCard).
 import React, { useState } from "react";
 import {
   Menu,
@@ -11,6 +15,7 @@ import {
 import Column from "@/components/Column";
 import { groupTasks, GroupedTasks } from "@/utils/groupTasks";
 import { initialTasks, Task } from "@/data/tasks";
+import TaskCard from "@/components/TaskCard";
 
 const columns = [
   { id: "to-do", title: "To - Do List", dotColor: "bg-yellow-500" },
@@ -23,6 +28,7 @@ export default function Home() {
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [draggedFrom, setDraggedFrom] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [view, setView] = useState<"board" | "list">("board"); // New: View state.
 
   const handleDragStart = (task: Task, columnId: string) => {
     setDraggedTask(task);
@@ -63,6 +69,16 @@ export default function Home() {
       t.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const groupedTasks = groupTasks(filteredTasks);
+
+  // New: Sort filtered tasks for list view (To Do first, then In Progress, then Not Started).
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    const order: Record<Task["status"], number> = {
+      "To Do": 0,
+      "In Progress": 1,
+      "Not Started": 2,
+    };
+    return order[a.status] - order[b.status];
+  });
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -114,10 +130,24 @@ export default function Home() {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
-              <button className="px-6 py-2 rounded-full bg-neutral-900 text-neutral-400 hover:bg-neutral-800">
+              <button
+                onClick={() => setView("list")} // New: Toggle to list.
+                className={`px-6 py-2 rounded-full ${
+                  view === "list"
+                    ? "bg-neutral-900 border-2 border-orange-500 text-white"
+                    : "bg-neutral-900 text-neutral-400 hover:bg-neutral-800"
+                }`}
+              >
                 List View
               </button>
-              <button className="px-6 py-2 rounded-full bg-neutral-900 border-2 border-orange-500 text-white">
+              <button
+                onClick={() => setView("board")} // New: Toggle to board.
+                className={`px-6 py-2 rounded-full ${
+                  view === "board"
+                    ? "bg-neutral-900 border-2 border-orange-500 text-white"
+                    : "bg-neutral-900 text-neutral-400 hover:bg-neutral-800"
+                }`}
+              >
                 Board View
               </button>
             </div>
@@ -131,22 +161,56 @@ export default function Home() {
             </div>
           </div>
         </div>
-        {/* Board Columns */}
-        <div className="p-8 overflow-x-auto">
-          <div className="flex gap-6 min-w-max">
-            {columns.map((column) => (
-              <Column
-                key={column.id}
-                id={column.id}
-                title={column.title}
-                dotColor={column.dotColor}
-                tasks={groupedTasks[column.id as keyof GroupedTasks] || []}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-                onDragStart={handleDragStart}
-              />
-            ))}
-          </div>
+        {/* Content: Board or List */}
+        <div className="p-8">
+          {view === "board" ? (
+            /* Board Columns */
+            <div className="overflow-x-auto">
+              <div className="flex gap-6 min-w-max">
+                {columns.map((column) => (
+                  <Column
+                    key={column.id}
+                    id={column.id}
+                    title={column.title}
+                    dotColor={column.dotColor}
+                    tasks={groupedTasks[column.id as keyof GroupedTasks] || []}
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                    onDragStart={handleDragStart}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* New: List View - Vertical list with header and sorted TaskCards. */
+            <div className="space-y-4">
+              {/* List Header */}
+              <div className="grid grid-cols-[auto,1fr,auto,auto,auto] items-center gap-4 bg-neutral-900 rounded-lg p-4 border border-neutral-700 font-semibold text-neutral-400">
+                <span>Status</span>
+                <span>Title & Description</span>
+                <span>Assignee</span>
+                <span>Due Date</span>
+                <span>Priority</span>
+              </div>
+              {/* Tasks List */}
+              <div className="space-y-2">
+                {sortedTasks.length === 0 ? (
+                  <p className="text-neutral-400 text-center py-8">
+                    No tasks found.
+                  </p>
+                ) : (
+                  sortedTasks.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      columnId="list" // Dummy for prop; no drag in list.
+                      onDragStart={() => {}} // No-op for list view.
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
