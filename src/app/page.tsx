@@ -1,34 +1,28 @@
-"use client"; // Client-side for state (drag/drop, search, view toggle).
+'use client'; // Client-side for state (drag/drop, search, view toggle).
 
 // Main board page: Sidebar, header, columns with drag/drop (Levels 1-2).
 // Uses flat tasks state; groups via utility (Level 3). Search filters client-side.
 // Added: List view toggle with sorted task list (minimal reuse of TaskCard).
-import React, { useState } from "react";
-import {
-  Menu,
-  Search as SearchIcon,
-  LayoutGrid,
-  TrendingUp,
-  Phone,
-  Bell,
-} from "lucide-react";
-import Column from "@/components/Column";
-import { groupTasks, GroupedTasks } from "@/utils/groupTasks";
-import { initialTasks, Task } from "@/data/tasks";
-import TaskCard from "@/components/TaskCard";
+import React, { useState } from 'react';
+import { Menu, Search as SearchIcon, LayoutGrid, TrendingUp, Phone, Bell } from 'lucide-react';
+import Column from '@/components/Column';
+import { groupTasks, GroupedTasks } from '@/utils/groupTasks';
+import { initialTasks, Task } from '@/data/tasks';
+import TaskCard from '@/components/TaskCard';
 
 const columns = [
-  { id: "to-do", title: "To - Do List", dotColor: "bg-yellow-500" },
-  { id: "in-progress", title: "In Progress", dotColor: "bg-cyan-500" },
-  { id: "not-started", title: "Not Started", dotColor: "bg-orange-500" },
+  { id: 'to-do', title: 'To - Do List', dotColor: 'bg-yellow-500' },
+  { id: 'in-progress', title: 'In Progress', dotColor: 'bg-cyan-500' },
+  { id: 'not-started', title: 'Not Started', dotColor: 'bg-orange-500' },
+  { id: 'completed', title: 'Completed', dotColor: 'bg-green-500' }, // Added: Completed column.
 ];
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [draggedFrom, setDraggedFrom] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [view, setView] = useState<"board" | "list">("board"); // New: View state.
+  const [searchTerm, setSearchTerm] = useState('');
+  const [view, setView] = useState<'board' | 'list'>('board'); // New: View state.
 
   const handleDragStart = (task: Task, columnId: string) => {
     setDraggedTask(task);
@@ -48,11 +42,10 @@ export default function Home() {
       return;
     }
     const newStatus =
-      targetColumnId === "to-do"
-        ? "To Do"
-        : targetColumnId === "in-progress"
-        ? "In Progress"
-        : "Not Started";
+      targetColumnId === 'to-do' ? 'To Do' :
+      targetColumnId === 'in-progress' ? 'In Progress' :
+      targetColumnId === 'not-started' ? 'Not Started' :
+      'Completed'; // Added: Completed status.
     setTasks((prev) =>
       prev.map((t) =>
         t.id === draggedTask.id ? { ...t, status: newStatus } : t
@@ -70,12 +63,13 @@ export default function Home() {
   );
   const groupedTasks = groupTasks(filteredTasks);
 
-  // New: Sort filtered tasks for list view (To Do first, then In Progress, then Not Started).
+  // New: Sort filtered tasks for list view (To Do first, then In Progress, then Not Started, then Completed).
   const sortedTasks = [...filteredTasks].sort((a, b) => {
-    const order: Record<Task["status"], number> = {
-      "To Do": 0,
-      "In Progress": 1,
-      "Not Started": 2,
+    const order: Record<Task['status'], number> = {
+      'To Do': 0,
+      'In Progress': 1,
+      'Not Started': 2,
+      'Completed': 3, // Added: Completed last.
     };
     return order[a.status] - order[b.status];
   });
@@ -131,21 +125,21 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
               <button
-                onClick={() => setView("list")} // New: Toggle to list.
+                onClick={() => setView('list')} // New: Toggle to list.
                 className={`px-6 py-2 rounded-full ${
-                  view === "list"
-                    ? "bg-neutral-900 border-2 border-orange-500 text-white"
-                    : "bg-neutral-900 text-neutral-400 hover:bg-neutral-800"
+                  view === 'list'
+                    ? 'bg-neutral-900 border-2 border-orange-500 text-white'
+                    : 'bg-neutral-900 text-neutral-400 hover:bg-neutral-800'
                 }`}
               >
                 List View
               </button>
               <button
-                onClick={() => setView("board")} // New: Toggle to board.
+                onClick={() => setView('board')} // New: Toggle to board.
                 className={`px-6 py-2 rounded-full ${
-                  view === "board"
-                    ? "bg-neutral-900 border-2 border-orange-500 text-white"
-                    : "bg-neutral-900 text-neutral-400 hover:bg-neutral-800"
+                  view === 'board'
+                    ? 'bg-neutral-900 border-2 border-orange-500 text-white'
+                    : 'bg-neutral-900 text-neutral-400 hover:bg-neutral-800'
                 }`}
               >
                 Board View
@@ -163,7 +157,7 @@ export default function Home() {
         </div>
         {/* Content: Board or List */}
         <div className="p-8">
-          {view === "board" ? (
+          {view === 'board' ? (
             /* Board Columns */
             <div className="overflow-x-auto">
               <div className="flex gap-6 min-w-max">

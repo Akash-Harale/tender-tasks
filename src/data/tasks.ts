@@ -1,6 +1,6 @@
 // Task models and initial data: Flat array for easier manipulation (e.g., drag/drop updates status).
 // Separated from UI for scalability (Level 3).
-export type TaskStatus = 'To Do' | 'In Progress' | 'Not Started';
+export type TaskStatus = 'To Do' | 'In Progress' | 'Not Started' | 'Completed'; // Added: 'Completed'.
 export type Priority = 'Low' | 'High';
 
 export interface Task {
@@ -15,7 +15,8 @@ export interface Task {
   attachments: number;
 }
 
-// Initial data: 9 tasks (3 per column), with corrected statuses and varied priorities.
+// Initial data: 12 tasks (3 per column), with corrected statuses and varied priorities.
+// Added: 3 Completed tasks.
 export const initialTasks: Task[] = [
   // To Do
   {
@@ -116,6 +117,40 @@ export const initialTasks: Task[] = [
     dueDate: '22 Dec 24',
     priority: 'Low',
     status: 'Not Started',
+    comments: 12,
+    attachments: 3,
+  },
+  // Completed (New)
+  {
+    id: 10,
+    title: 'Construction Tender 1',
+    description: 'Description goes in here about the tender',
+    assignee: 'John Doe',
+    dueDate: '22 Dec 24',
+    priority: 'Low',
+    status: 'Completed',
+    comments: 12,
+    attachments: 3,
+  },
+  {
+    id: 11,
+    title: 'Construction Tender 1',
+    description: 'Description goes in here about the tender',
+    assignee: 'John Doe',
+    dueDate: '22 Dec 24',
+    priority: 'High',
+    status: 'Completed',
+    comments: 12,
+    attachments: 3,
+  },
+  {
+    id: 12,
+    title: 'Construction Tender 1',
+    description: 'Description goes in here about the tender',
+    assignee: 'John Doe',
+    dueDate: '22 Dec 24',
+    priority: 'Low',
+    status: 'Completed',
     comments: 12,
     attachments: 3,
   },

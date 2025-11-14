@@ -6,6 +6,7 @@ export interface GroupedTasks {
   'to-do': Task[];
   'in-progress': Task[];
   'not-started': Task[];
+  'completed': Task[]; // Added: Completed group.
 }
 
 export function groupTasks(tasks: Task[]): GroupedTasks {
@@ -13,5 +14,6 @@ export function groupTasks(tasks: Task[]): GroupedTasks {
     'to-do': tasks.filter((t) => t.status === 'To Do'),
     'in-progress': tasks.filter((t) => t.status === 'In Progress'),
     'not-started': tasks.filter((t) => t.status === 'Not Started'),
+    'completed': tasks.filter((t) => t.status === 'Completed'), // Added.
   };
 }

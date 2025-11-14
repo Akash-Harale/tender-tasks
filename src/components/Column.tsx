@@ -1,8 +1,8 @@
 // Column: Renders header and scrollable task list (Level 1 core UI).
 // Handles drop for drag/drop; passes columnId to tasks for drag start.
-import { Plus, MoreHorizontal } from "lucide-react";
-import TaskCard from "./TaskCard";
-import { Task } from "@/data/tasks";
+import { Plus, MoreHorizontal } from 'lucide-react';
+import TaskCard from './TaskCard';
+import { Task } from '@/data/tasks';
 
 interface ColumnProps {
   id: string;
@@ -24,7 +24,7 @@ export default function Column({
   onDragStart,
 }: ColumnProps) {
   return (
-    <div className="w-96 shrink-0">
+    <div className="w-96 flex-shrink-0"> {/* Fixed: flex-shrink-0 */}
       <div
         className="bg-neutral-900 rounded-lg"
         onDragOver={onDragOver}
