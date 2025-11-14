@@ -103,7 +103,7 @@ export default function Home() {
       {/* Main Content */}
       <div className="ml-16">
         {/* Header */}
-        <div className="border-b border-neutral-800 px-8 py-4">
+        <div className="sticky top-0 z-10 bg-neutral-900 border-b border-neutral-800 px-8 py-4">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold">Tender Tasks</h1>
             <div className="flex items-center gap-4">
